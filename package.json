@@ -1,0 +1,33 @@
+{
+  "name": "Flynest",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Frasan00/Flynest.git",
+  "author": "Frasan00 <francesco.sangiovanni.7@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "mosca": "^2.8.3",
+    "mqtt": "^5.3.5",
+    "winston": "^3.11.0"
+  },
+  "scripts": {
+    "watch": "tsc --watch",
+    "test": "yarn build && yarn start",
+    "format": "prettier --write '**/*.ts'",
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "build": "tsup",
+    "dev": "ts-node src/index.ts",
+    "start": "node lib/index.js"
+  },
+  "devDependencies": {
+    "@adonisjs/eslint-config": "^1.2.0",
+    "@types/mosca": "^2.8.8",
+    "@types/node": "^20.11.20",
+    "dotenv": "^16.3.1",
+    "prettier": "^3.1.0",
+    "tsc": "^2.0.4",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,2 +1,3 @@
 # Flynest
-Mqtt broker written in C
+
+- MQTT server written in javascript that emulates an Http server

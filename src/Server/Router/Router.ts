@@ -3,8 +3,8 @@ import {
   ControllerType,
   HttpMethodType,
   MiddlewareType,
-} from "../Server/ServerTypes";
-import { checkDuplicateTopic, validatePath } from "../Utils";
+} from "../ServerTypes";
+import { checkDuplicateTopic, validatePath } from "../../Utils";
 
 export class Router {
   protected internalPrefix?: string;

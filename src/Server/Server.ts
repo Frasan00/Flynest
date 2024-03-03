@@ -1,7 +1,7 @@
 import mqtt, { MqttClient } from "mqtt";
 import { log, logError } from "../../Logger";
-import Request from "../Request/Request";
-import Response from "../Response/Response";
+import Request from "./Request/Request";
+import Response from "./Response/Response";
 import {
   ApiRouteType,
   ControllerType,
@@ -9,7 +9,7 @@ import {
   MiddlewareType,
   ServerOptions,
 } from "./ServerTypes";
-import { Router } from "../Router/Router";
+import { Router } from "./Router/Router";
 import { checkDuplicateTopic, validatePath } from "../Utils";
 import { rejects } from "node:assert";
 

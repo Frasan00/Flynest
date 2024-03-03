@@ -1,7 +1,7 @@
 import { FlynestClientOptions, HttpMethod } from "./ClientTypes";
 import mqtt, { MqttClient } from "mqtt";
 import ClientResponse from "./ClientResponse";
-import { BodyType, HeaderType } from "../Request/RequestTypes";
+import { BodyType, HeaderType } from "../Server/Request/RequestTypes";
 import { validatePath } from "../Utils";
 import { log } from "../../Logger";
 

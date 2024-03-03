@@ -1,6 +1,6 @@
 import { MqttClient } from "mqtt";
 import { StatusCode } from "./ResponseTypes";
-import { log } from "../../Logger";
+import { log } from "../../../Logger";
 
 export default class Response {
   protected topic: string;

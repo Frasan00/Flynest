@@ -1,5 +1,5 @@
-import Request from "../Request/Request";
-import Response from "../Response/Response";
+import Request from "./Request/Request";
+import Response from "./Response/Response";
 
 export interface ServerOptions {
   host: string;

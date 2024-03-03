@@ -1,5 +1,5 @@
 import Server from "./Server/Server";
-import Router from "./Router/Router";
+import Router from "./Server/Router/Router";
 import FlynestClient from "./Client/Client";
 
 const server = new Server({

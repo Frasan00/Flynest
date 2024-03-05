@@ -31,7 +31,7 @@ export default class Server {
     this.username = options.username;
     this.password = options.password;
     this.logs = options.logs ?? false;
-    this.reconnectionRetries = options.reconnectionRetries ?? 3;
+    this.reconnectionRetries = options.reconnectionRetries ?? 1;
     this.url = `mqtt://${this.host}:${this.port}`;
   }
 

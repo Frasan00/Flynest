@@ -4,6 +4,7 @@ import ClientResponse from "./ClientResponse";
 import { BodyType, HeaderType } from "../Server/Request/RequestTypes";
 import { validatePath } from "../Utils";
 import { log } from "../../Logger";
+import {HttpMethodType} from "../Server/ServerTypes";
 
 class FlynestClient {
   protected mqttClient: MqttClient;
@@ -92,6 +93,159 @@ class FlynestClient {
 
     if (body) {
       requestBody = { ...requestBody, ...body };
+    }
+
+    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
+    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
+    return this.awaitRequest(requestTopic);
+  }
+
+  public async get(
+      path: string,
+      {
+        headers,
+        queryParams,
+      }: {
+        headers?: HeaderType;
+        queryParams?: Record<string, string>;
+      },
+  ): Promise<ClientResponse> {
+    path = validatePath(path);
+    const requestTopic = `SERVER/${HttpMethodType.GET}${path}`;
+    let requestBody = {};
+
+    if (headers) {
+      requestBody = { ...requestBody, ...headers };
+    }
+
+    if (queryParams) {
+      requestBody = { ...requestBody, ...queryParams };
+    }
+
+    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
+    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
+    return this.awaitRequest(requestTopic);
+  }
+
+  public async post(
+      path: string,
+      {
+        headers,
+        body,
+        queryParams,
+      }: {
+        headers?: HeaderType;
+        body?: BodyType;
+        queryParams?: Record<string, string>;
+      },
+  ): Promise<ClientResponse> {
+    path = validatePath(path);
+    const requestTopic = `SERVER/${HttpMethodType.POST}${path}`;
+    let requestBody = {};
+
+    if (headers) {
+      requestBody = { ...requestBody, ...headers };
+    }
+
+    if (queryParams) {
+      requestBody = { ...requestBody, ...queryParams };
+    }
+
+    if (body) {
+      requestBody = { ...requestBody, ...body };
+    }
+
+    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
+    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
+    return this.awaitRequest(requestTopic);
+  }
+
+  public async patch(
+      path: string,
+      {
+        headers,
+        body,
+        queryParams,
+      }: {
+        headers?: HeaderType;
+        body?: BodyType;
+        queryParams?: Record<string, string>;
+      },
+  ): Promise<ClientResponse> {
+    path = validatePath(path);
+    const requestTopic = `SERVER/${HttpMethodType.PATCH}${path}`;
+    let requestBody = {};
+
+    if (headers) {
+      requestBody = { ...requestBody, ...headers };
+    }
+
+    if (queryParams) {
+      requestBody = { ...requestBody, ...queryParams };
+    }
+
+    if (body) {
+      requestBody = { ...requestBody, ...body };
+    }
+
+    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
+    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
+    return this.awaitRequest(requestTopic);
+  }
+
+  public async put(
+      path: string,
+      {
+        headers,
+        body,
+        queryParams,
+      }: {
+        headers?: HeaderType;
+        body?: BodyType;
+        queryParams?: Record<string, string>;
+      },
+  ): Promise<ClientResponse> {
+    path = validatePath(path);
+    const requestTopic = `SERVER/${HttpMethodType.PUT}${path}`;
+    let requestBody = {};
+
+    if (headers) {
+      requestBody = { ...requestBody, ...headers };
+    }
+
+    if (queryParams) {
+      requestBody = { ...requestBody, ...queryParams };
+    }
+
+    if (body) {
+      requestBody = { ...requestBody, ...body };
+    }
+
+    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
+    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
+    return this.awaitRequest(requestTopic);
+  }
+
+  public async delete(
+      path: string,
+      {
+        headers,
+        queryParams,
+      }: {
+        headers?: HeaderType;
+        queryParams?: Record<string, string>;
+      },
+  ): Promise<ClientResponse> {
+    path = validatePath(path);
+    const requestTopic = `SERVER/${HttpMethodType.DELETE}${path}`;
+    let requestBody = {};
+
+    if (headers) {
+      requestBody = { ...requestBody, ...headers };
+    }
+
+    if (queryParams) {
+      requestBody = { ...requestBody, ...queryParams };
     }
 
     this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));

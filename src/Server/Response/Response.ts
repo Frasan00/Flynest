@@ -6,6 +6,7 @@ export default class Response {
   protected topic: string;
   protected mqttClient!: MqttClient;
   protected logs: boolean = false;
+  protected hasSent: boolean = false;
 
   public constructor(
     mqttClient: MqttClient,
@@ -32,7 +33,12 @@ export default class Response {
     });
   }
 
+  public hasBeenSent(): boolean {
+    return this.hasSent;
+  }
+
   public send(body: Record<string, any>, code: StatusCode = 200): void {
+    this.hasSent = true;
     this.mqttClient.publish(this.topic, this.parseResponse(body, code));
 
     log(`Published: ${this.topic} -> ${body}`, this.logs);

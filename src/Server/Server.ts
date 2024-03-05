@@ -192,9 +192,12 @@ export default class Server {
       const response = new Response(this.mqttClient, receivedTopic, this.logs);
 
       if (middlewares) {
-        await Promise.allSettled(
-          middlewares.map((middleware) => middleware(request, response)),
-        );
+        for (const middleware of middlewares) {
+          await middleware(request, response);
+          if (response.hasBeenSent()) {
+            return;
+          }
+        }
       }
 
       return await controller(request, response);

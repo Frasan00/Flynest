@@ -27,6 +27,8 @@ const server = new Server({
     brokerUrl: "mqtt://localhost:1883",
   });
 
+  server.applyRouter(Router);
+
   setInterval(async () => {
     const res = await client.get("/", {
       headers: {
@@ -41,6 +43,4 @@ const server = new Server({
 
     console.log(res);
   }, 2000)
-
-  server.applyRouter(Router);
 })();

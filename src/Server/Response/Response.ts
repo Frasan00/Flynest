@@ -19,24 +19,11 @@ export default class Response {
     this.logs = logs;
   }
 
-  private parseResponse(
-    body: Record<string, any> | Buffer,
-    statusCode: StatusCode,
-  ): string | Buffer {
-    if (Buffer.isBuffer(body)) {
-      return body;
-    }
-
-    return JSON.stringify({
-      statusCode,
-      body,
-    });
-  }
-
-  public hasBeenSent(): boolean {
-    return this.hasSent;
-  }
-
+  /**
+   * @Description Sends a response to the client, advised to use the specific method for the response based on the status code
+   * @param body
+   * @param code
+   */
   public send(body: Record<string, any>, code: StatusCode = 200): void {
     this.hasSent = true;
     this.mqttClient.publish(this.topic, this.parseResponse(body, code));
@@ -44,6 +31,11 @@ export default class Response {
     log(`Published: ${this.topic} -> ${body}`, this.logs);
   }
 
+  /**
+   * @Description Sends a response to the client with a buffer instead of a json object
+   * @param buffer
+   * @param code
+   */
   public sendBuffer(buffer: Buffer, code: StatusCode = 200): void {
     this.mqttClient.publish(this.topic, buffer);
   }
@@ -298,5 +290,26 @@ export default class Response {
 
   public networkAuthenticationRequired(body: Record<string, any>): void {
     this.send(body, 511);
+  }
+
+  /**
+   * @description Returns if the response has been sent to the client - only one response can be sent, if you return something in a middleware, all the chain of middlewares and the controller will be stopped
+   */
+  public hasBeenSent(): boolean {
+    return this.hasSent;
+  }
+
+  private parseResponse(
+      body: Record<string, any> | Buffer,
+      statusCode: StatusCode,
+  ): string | Buffer {
+    if (Buffer.isBuffer(body)) {
+      return body;
+    }
+
+    return JSON.stringify({
+      statusCode,
+      body,
+    });
   }
 }

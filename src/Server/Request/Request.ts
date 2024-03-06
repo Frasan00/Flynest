@@ -9,19 +9,18 @@ export default class Request {
   public buffer?: Buffer;
   public ctx?: Record<string, any>;
 
-  public constructor(topic: string, message: string | Buffer) {
+  public constructor(topic: string, message: string) {
+    this.url = topic;
     let requestBody: RequestBody | null = null;
-    if (Buffer.isBuffer(message)) {
-      this.buffer = message;
-    } else {
-      this.url = topic;
-      requestBody = JSON.parse(message) as RequestBody;
+    if (message) {
+      requestBody = JSON.parse(message);
     }
 
     if (requestBody) {
       this.qs = requestBody.qs;
       this.headers = requestBody.headers;
       this.body = requestBody.body;
+      this.buffer = requestBody.buffer.data;
       this.method = topic.split("/")[1];
     }
   }

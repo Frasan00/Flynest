@@ -1,10 +1,13 @@
-export type BodyType = Record<any, any> | Buffer;
-
+export type BodyType = Record<string, any>;
 
 export type RequestBody = {
   qs?: Record<string, string>;
   headers?: HeaderType;
   body?: BodyType;
+  buffer: {
+    type: string,
+    data: Buffer
+  };
 };
 
 export type HeaderType = {

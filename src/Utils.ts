@@ -22,6 +22,4 @@ export function checkDuplicateTopic(
     logError(new Error("Duplicate route"), `Route ${topic} already exists`);
     process.exit(1);
   }
-
-  return;
 }

@@ -16,12 +16,17 @@ const server = new Server({
     return response.ok({ message: "Hello World" });
   });
 
-  Router.get('/', async (request, response) => {
-    return response.ok({ message: "Hello World" });
-  }, [async (request, response) => {
-
-    console.log('Middleware');
-  }])
+  Router.post(
+    "/",
+    async (request, response) => {
+      return response.ok({ message: "Hello World" });
+    },
+    [
+      async (request, response) => {
+        console.log("Middleware");
+      },
+    ],
+  );
 
   const client = new FlynestClient({
     brokerUrl: "mqtt://localhost:1883",
@@ -30,17 +35,20 @@ const server = new Server({
   server.applyRouter(Router);
 
   setInterval(async () => {
-    const res = await client.get("/", {
-      headers: {
-        authorization: "Bearer 123",
-      },
-      queryParams: {
-        id: "123",
-      }
-    }).catch((error) => {
-      console.log(error);
-    });
+    const res = await client
+      .post("/", {
+        headers: {
+          authorization: "Bearer 123",
+        },
+        buffer: Buffer.from("Buffered data"),
+        queryParams: {
+          id: "123",
+        },
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     console.log(res);
-  }, 2000)
+  }, 2000);
 })();

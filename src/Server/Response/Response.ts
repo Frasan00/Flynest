@@ -300,8 +300,8 @@ export default class Response {
   }
 
   private parseResponse(
-      body: Record<string, any> | Buffer,
-      statusCode: StatusCode,
+    body: Record<string, any> | Buffer,
+    statusCode: StatusCode,
   ): string | Buffer {
     if (Buffer.isBuffer(body)) {
       return body;

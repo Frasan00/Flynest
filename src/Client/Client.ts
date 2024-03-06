@@ -4,7 +4,7 @@ import ClientResponse from "./ClientResponse";
 import { BodyType, HeaderType } from "../Server/Request/RequestTypes";
 import { validatePath } from "../Utils";
 import { log } from "../../Logger";
-import {HttpMethodType} from "../Server/ServerTypes";
+import { HttpMethodType } from "../Server/ServerTypes";
 
 class FlynestClient {
   protected mqttClient: MqttClient;
@@ -58,57 +58,15 @@ class FlynestClient {
     this.mqttClient = options.mqttClient;
   }
 
-  /**
-   * @Description Sends a request to the broker - for query params use the params object do not use qs inside the path
-   * @param method {GET, POST, PUT, PATCH, DELETE} - http method
-   * @param path {string} - path
-   * @param body {BodyType} - request body
-   * @param headers {HeaderType} - headers
-   * @param queryParams {object} - query params
-   */
-  public async request(
-    method: HttpMethod,
+  public async get(
     path: string,
     {
-      body,
       headers,
       queryParams,
     }: {
-      body?: BodyType;
       headers?: HeaderType;
       queryParams?: Record<string, string>;
     },
-  ): Promise<ClientResponse> {
-    path = validatePath(path);
-    const requestTopic = `SERVER/${method}${path}`;
-    let requestBody = {};
-
-    if (headers) {
-      requestBody = { ...requestBody, ...headers };
-    }
-
-    if (queryParams) {
-      requestBody = { ...requestBody, ...queryParams };
-    }
-
-    if (body) {
-      requestBody = { ...requestBody, ...body };
-    }
-
-    this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
-    this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
-    return this.awaitRequest(requestTopic);
-  }
-
-  public async get(
-      path: string,
-      {
-        headers,
-        queryParams,
-      }: {
-        headers?: HeaderType;
-        queryParams?: Record<string, string>;
-      },
   ): Promise<ClientResponse> {
     path = validatePath(path);
     const requestTopic = `SERVER/${HttpMethodType.GET}${path}`;
@@ -128,16 +86,18 @@ class FlynestClient {
   }
 
   public async post(
-      path: string,
-      {
-        headers,
-        body,
-        queryParams,
-      }: {
-        headers?: HeaderType;
-        body?: BodyType;
-        queryParams?: Record<string, string>;
-      },
+    path: string,
+    {
+      headers,
+      body,
+      buffer,
+      queryParams,
+    }: {
+      headers?: HeaderType;
+      body?: BodyType;
+      buffer?: Buffer;
+      queryParams?: Record<string, string>;
+    },
   ): Promise<ClientResponse> {
     path = validatePath(path);
     const requestTopic = `SERVER/${HttpMethodType.POST}${path}`;
@@ -155,22 +115,26 @@ class FlynestClient {
       requestBody = { ...requestBody, ...body };
     }
 
+    if (buffer) {
+      requestBody = { ...requestBody, buffer: buffer };
+    }
+
     this.mqttClient.publish(requestTopic, JSON.stringify(requestBody));
     this.mqttClient.subscribe(requestTopic.replace("SERVER", "CLIENT"));
     return this.awaitRequest(requestTopic);
   }
 
   public async patch(
-      path: string,
-      {
-        headers,
-        body,
-        queryParams,
-      }: {
-        headers?: HeaderType;
-        body?: BodyType;
-        queryParams?: Record<string, string>;
-      },
+    path: string,
+    {
+      headers,
+      body,
+      queryParams,
+    }: {
+      headers?: HeaderType;
+      body?: BodyType;
+      queryParams?: Record<string, string>;
+    },
   ): Promise<ClientResponse> {
     path = validatePath(path);
     const requestTopic = `SERVER/${HttpMethodType.PATCH}${path}`;
@@ -194,16 +158,16 @@ class FlynestClient {
   }
 
   public async put(
-      path: string,
-      {
-        headers,
-        body,
-        queryParams,
-      }: {
-        headers?: HeaderType;
-        body?: BodyType;
-        queryParams?: Record<string, string>;
-      },
+    path: string,
+    {
+      headers,
+      body,
+      queryParams,
+    }: {
+      headers?: HeaderType;
+      body?: BodyType;
+      queryParams?: Record<string, string>;
+    },
   ): Promise<ClientResponse> {
     path = validatePath(path);
     const requestTopic = `SERVER/${HttpMethodType.PUT}${path}`;
@@ -227,14 +191,14 @@ class FlynestClient {
   }
 
   public async delete(
-      path: string,
-      {
-        headers,
-        queryParams,
-      }: {
-        headers?: HeaderType;
-        queryParams?: Record<string, string>;
-      },
+    path: string,
+    {
+      headers,
+      queryParams,
+    }: {
+      headers?: HeaderType;
+      queryParams?: Record<string, string>;
+    },
   ): Promise<ClientResponse> {
     path = validatePath(path);
     const requestTopic = `SERVER/${HttpMethodType.DELETE}${path}`;
@@ -256,7 +220,7 @@ class FlynestClient {
   private async awaitRequest(requestTopic: string): Promise<ClientResponse> {
     return new Promise((resolve, reject) => {
       this.mqttClient.on("message", (topic, message) => {
-        if (requestTopic.replace('SERVER', 'CLIENT') === topic) {
+        if (requestTopic.replace("SERVER", "CLIENT") === topic) {
           let parsedMessage = Buffer.from(message).toString();
           if (JSON.parse(parsedMessage)) {
             parsedMessage = JSON.parse(parsedMessage);

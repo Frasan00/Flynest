@@ -6,18 +6,37 @@ import {
 } from "../ServerTypes";
 import { checkDuplicateTopic, validatePath } from "../../Utils";
 
+export type GroupOptions = {
+  prefix?: string;
+  middlewares?: MiddlewareType[];
+};
+
 export class Router {
   protected internalPrefix?: string;
+  protected middlewares?: MiddlewareType[];
   public routes: ApiRouteType = {};
 
-  constructor(prefix?: string) {
+  constructor(prefix?: string, middlewares?: MiddlewareType[]) {
     this.internalPrefix = prefix ? validatePath(prefix) : undefined;
+    this.middlewares = middlewares;
   }
 
-  public group(cb: (router: Router) => void, prefix?: string): this {
-    const router = new Router(prefix);
+  public group(
+    cb: (router: Router) => void,
+    options: GroupOptions = {},
+  ): Router {
+    const newPrefix = `${this.internalPrefix || ""}/${options.prefix || ""}`;
+    const newMiddlewares = [
+      ...(this.middlewares ?? []),
+      ...(options.middlewares ?? []),
+    ];
+    const router = new Router(
+      newPrefix === "/" ? undefined : validatePath(newPrefix),
+      newMiddlewares,
+    );
     cb(router);
     this.applyRoutes(router);
+
     return this;
   }
 
@@ -33,8 +52,8 @@ export class Router {
     checkDuplicateTopic(`SERVER/${HttpMethodType.GET}${path}`, this.routes);
     Object.assign(this.routes, {
       [`SERVER/${HttpMethodType.GET}${path}`]: {
-        controller,
-        middlewares,
+        controller: controller,
+        middlewares: [...(this.middlewares ?? []), ...(middlewares ?? [])],
       },
     });
   }
@@ -52,8 +71,8 @@ export class Router {
     checkDuplicateTopic(`SERVER/${HttpMethodType.POST}${path}`, this.routes);
     Object.assign(this.routes, {
       [`SERVER/${HttpMethodType.POST}${path}`]: {
-        controller,
-        middlewares,
+        controller: controller,
+        middlewares: [...(this.middlewares ?? []), ...(middlewares ?? [])],
       },
     });
   }
@@ -70,8 +89,8 @@ export class Router {
     checkDuplicateTopic(`SERVER/${HttpMethodType.PUT}${path}`, this.routes);
     Object.assign(this.routes, {
       [`SERVER/${HttpMethodType.PUT}${path}`]: {
-        controller,
-        middlewares,
+        controller: controller,
+        middlewares: [...(this.middlewares ?? []), ...(middlewares ?? [])],
       },
     });
   }
@@ -88,8 +107,8 @@ export class Router {
     checkDuplicateTopic(`SERVER/${HttpMethodType.PATCH}${path}`, this.routes);
     Object.assign(this.routes, {
       [`SERVER/${HttpMethodType.PATCH}${path}`]: {
-        controller,
-        middlewares,
+        controller: controller,
+        middlewares: [...(this.middlewares ?? []), ...(middlewares ?? [])],
       },
     });
   }
@@ -106,17 +125,21 @@ export class Router {
     checkDuplicateTopic(`SERVER/${HttpMethodType.DELETE}${path}`, this.routes);
     Object.assign(this.routes, {
       [`SERVER/${HttpMethodType.DELETE}${path}`]: {
-        controller,
-        middlewares,
+        controller: controller,
+        middlewares: [...(this.middlewares ?? []), ...(middlewares ?? [])],
       },
     });
   }
 
   protected applyRoutes(router: Router) {
+    console.log(router);
     Object.keys(router.routes).forEach((key) => {
       checkDuplicateTopic(key, this.routes);
       Object.assign(this.routes, {
-        [key]: router.routes[key as keyof ApiRouteType],
+        [key]: {
+          controller: router.routes[key as keyof ApiRouteType].controller,
+          middlewares: router.routes[key as keyof ApiRouteType].middlewares,
+        },
       });
     });
   }

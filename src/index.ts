@@ -1,6 +1,10 @@
 import Server from "./Server/Server";
 import Router from "./Server/Router/Router";
 import FlynestClient from "./Client/Client";
+import Request from "./Server/Request/Request";
+import Response from "./Server/Response/Response";
+
+export { Server, Router, FlynestClient, Request, Response };
 
 const server = new Server({
   host: "localhost",
@@ -16,16 +20,36 @@ const server = new Server({
     return response.ok({ message: "Hello World" });
   });
 
-  Router.post(
-    "/",
-    async (request, response) => {
-      return response.ok({ message: "Hello World" });
+  Router.group(
+    (router) => {
+      router.post("/", async (request, response) => {
+        return response.ok({ message: "Hello World" });
+      });
+
+      router.get("/", async (request, response) => {
+        return response.ok({ message: "Hello World" });
+      });
+
+      router.group(
+        (router) => {
+          router.post("/", async (request, response) => {
+            return response.ok({ message: "Hello World" });
+          });
+        },
+        {
+          prefix: "/nested",
+          middlewares: [
+            async (request, response) => {
+              console.log("nested middleware");
+            },
+          ],
+        },
+      );
     },
-    [
-      async (request, response) => {
-        console.log("Middleware");
-      },
-    ],
+    {
+      prefix: "/api/",
+      middlewares: [async (req, res) => console.log("Middleware route")],
+    },
   );
 
   const client = new FlynestClient({
@@ -36,7 +60,7 @@ const server = new Server({
 
   setInterval(async () => {
     const res = await client
-      .post("/", {
+      .post("/api/nested", {
         headers: {
           authorization: "Bearer 123",
         },

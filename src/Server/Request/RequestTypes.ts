@@ -5,8 +5,8 @@ export type RequestBody = {
   headers?: HeaderType;
   body?: BodyType;
   buffer: {
-    type: string,
-    data: Buffer
+    type: string;
+    data: Buffer;
   };
 };
 

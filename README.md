@@ -1,7 +1,14 @@
 # Flynest - A Modern MQTT Server with HTTP-like Features
 
-- Flynest it's a modern platform that offers HTTP-like features and feel.
-- With Flynest, you can serve clients in a familiar HTTP way while having the efficiency and versatility of the MQTT protocol.
+### Flynest it's a modern platform that offers HTTP-like features and feel.
+### With Flynest, you can serve clients in a familiar HTTP way while having the efficiency and versatility of the MQTT protocol.
+
+- [Installation](#installation)
+- [Features](#features)
+- [Usage](#usage)
+- [Server-Initialization](#Server-Initialization)
+- [Routing](#routing)
+- [Client](#client)
 
 ## Installation
 
@@ -34,7 +41,7 @@ const server = new Server({
 
 ### Routing
 - Routing can be made with the Router object
-- Allows you to define common prefix routes
+- Allows you to define common prefix routes and Middlewares
 
 ```typescript
 import { Router } from 'flynest';
@@ -69,20 +76,16 @@ Router.group(
                     return response.ok({ message: "Hello World" });
                 });
             },
-            {
-                prefix: "/nested",
-                middlewares: [
-                    async (request, response) => {
-                        console.log("nested middleware");
-                    },
-                ],
-            },
+            "/nested",
+            [
+                async (request, response) => {
+                    console.log("nested middleware");
+                },
+            ],
         );
     },
-    {
-        prefix: "/api/",
-        middlewares: [async (req, res) => console.log("Middleware route")],
-    },
+    "/api/",
+    [async (request, response) => console.log("Middleware route")],
 );
 
 // To apply your routes to the server use

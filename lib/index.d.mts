@@ -128,16 +128,12 @@ type ApiRouteType = {
     [path: `SERVER/${HttpMethodType}/${string}`]: ApiType;
 };
 
-type GroupOptions = {
-    prefix?: string;
-    middlewares?: MiddlewareType[];
-};
 declare class Router {
     protected internalPrefix?: string;
     protected middlewares?: MiddlewareType[];
     routes: ApiRouteType;
     constructor(prefix?: string, middlewares?: MiddlewareType[]);
-    group(cb: (router: Router) => void, options?: GroupOptions): Router;
+    group(cb: (router: Router) => void, prefix?: string, middlewares?: MiddlewareType[]): Router;
     get(path: string, controller: ControllerType, middlewares?: MiddlewareType[]): void;
     post(path: string, controller: ControllerType, middlewares?: MiddlewareType[]): void;
     put(path: string, controller: ControllerType, middlewares?: MiddlewareType[]): void;

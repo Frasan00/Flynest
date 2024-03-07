@@ -6,11 +6,6 @@ import {
 } from "../ServerTypes";
 import { checkDuplicateTopic, validatePath } from "../../Utils";
 
-export type GroupOptions = {
-  prefix?: string;
-  middlewares?: MiddlewareType[];
-};
-
 export class Router {
   protected internalPrefix?: string;
   protected middlewares?: MiddlewareType[];
@@ -23,12 +18,13 @@ export class Router {
 
   public group(
     cb: (router: Router) => void,
-    options: GroupOptions = {},
+    prefix?: string,
+    middlewares?: MiddlewareType[],
   ): Router {
-    const newPrefix = `${this.internalPrefix || ""}/${options.prefix || ""}`;
+    const newPrefix = `${this.internalPrefix || ""}/${prefix || ""}`;
     const newMiddlewares = [
       ...(this.middlewares ?? []),
-      ...(options.middlewares ?? []),
+      ...(middlewares ?? []),
     ];
     const router = new Router(
       newPrefix === "/" ? undefined : validatePath(newPrefix),
